@@ -1,7 +1,6 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../database/db');
-const { authenticateToken, requireScorerOrAdmin } = require('../middleware/auth');
 
 // Get all teams with player count and tournament connections
 router.get('/', (req, res) => {
@@ -56,7 +55,7 @@ router.get('/:id', (req, res) => {
 });
 
 // Create new team with optional initial players (members) and tournament assignment
-router.post('/', authenticateToken, requireScorerOrAdmin, (req, res) => {
+router.post('/', (req, res) => {
   try {
     const { name, short_name, village, primary_color, logo_url, tournament_id, players } = req.body;
     if (!name || !short_name || !village) {
@@ -120,7 +119,7 @@ router.post('/', authenticateToken, requireScorerOrAdmin, (req, res) => {
 });
 
 // Add a single player to an existing team's squad
-router.post('/:id/players', authenticateToken, requireScorerOrAdmin, (req, res) => {
+router.post('/:id/players', (req, res) => {
   try {
     const teamId = req.params.id;
     const team = db.prepare('SELECT * FROM teams WHERE id = ?').get(teamId);
@@ -159,7 +158,7 @@ router.post('/:id/players', authenticateToken, requireScorerOrAdmin, (req, res) 
 });
 
 // Delete an entire team and all its squad members & match associations
-router.delete('/:id', authenticateToken, requireScorerOrAdmin, (req, res) => {
+router.delete('/:id', (req, res) => {
   const teamId = req.params.id;
 
   try {
@@ -207,7 +206,7 @@ router.delete('/:id', authenticateToken, requireScorerOrAdmin, (req, res) => {
 });
 
 // Delete a player from a team
-router.delete('/:teamId/players/:playerId', authenticateToken, requireScorerOrAdmin, (req, res) => {
+router.delete('/:teamId/players/:playerId', (req, res) => {
   try {
     const { teamId, playerId } = req.params;
     db.prepare('DELETE FROM players WHERE id = ? AND team_id = ?').run(playerId, teamId);

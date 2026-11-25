@@ -3,7 +3,6 @@ import {
   Shield, Users, PlusCircle, Trash2, Check, UserPlus,
   MapPin, Trophy, Sparkles, ChevronRight, X, AlertCircle
 } from 'lucide-react';
-import { useAuth } from '../context/AuthContext';
 import { Link } from 'react-router-dom';
 
 export default function TeamsPage() {
@@ -15,8 +14,6 @@ export default function TeamsPage() {
   const [detailsLoading, setDetailsLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
-
-  const { isScorer } = useAuth();
 
   // Create Team Modal
   const [showCreateTeamModal, setShowCreateTeamModal] = useState(false);
@@ -135,12 +132,6 @@ export default function TeamsPage() {
     setErrorMsg('');
     setSuccessMsg('');
 
-    const token = localStorage.getItem('cricket_auth_token');
-    if (!token) {
-      setErrorMsg('Please log in with Scorer credentials to create a team.');
-      return;
-    }
-
     // Filter valid player rows
     const validPlayers = playerRows.filter(p => p.name && p.name.trim() !== '');
 
@@ -153,8 +144,7 @@ export default function TeamsPage() {
       const res = await fetch('/api/teams', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify(payload)
       });
@@ -190,18 +180,11 @@ export default function TeamsPage() {
     setErrorMsg('');
     setSuccessMsg('');
 
-    const token = localStorage.getItem('cricket_auth_token');
-    if (!token) {
-      setErrorMsg('Please log in to add players.');
-      return;
-    }
-
     try {
       const res = await fetch(`/api/teams/${selectedTeam}/players`, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify(singlePlayerForm)
       });
@@ -228,11 +211,9 @@ export default function TeamsPage() {
   const handleDeletePlayer = async (playerId, playerName) => {
     if (!window.confirm(`Are you sure you want to remove "${playerName}" from the squad?`)) return;
 
-    const token = localStorage.getItem('cricket_auth_token');
     try {
       const res = await fetch(`/api/teams/${selectedTeam}/players/${playerId}`, {
-        method: 'DELETE',
-        headers: { Authorization: `Bearer ${token}` }
+        method: 'DELETE'
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || 'Failed to remove player');
@@ -249,16 +230,9 @@ export default function TeamsPage() {
       return;
     }
 
-    const token = localStorage.getItem('cricket_auth_token');
-    if (!token) {
-      setErrorMsg('Please log in with Scorer/Admin credentials to delete a team.');
-      return;
-    }
-
     try {
       const res = await fetch(`/api/teams/${teamId}`, {
-        method: 'DELETE',
-        headers: { Authorization: `Bearer ${token}` }
+        method: 'DELETE'
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || 'Failed to delete team');
@@ -297,12 +271,7 @@ export default function TeamsPage() {
         </div>
 
         <button
-          onClick={() => {
-            if (!isScorer) {
-              alert('Please login as Scorer or Admin to create your team (You can use 1-click login on the Login page).');
-            }
-            setShowCreateTeamModal(true);
-          }}
+          onClick={() => setShowCreateTeamModal(true)}
           className="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white font-black px-5 py-2.5 rounded-xl text-sm shadow-lg shadow-emerald-600/30 transition-all self-start sm:self-auto active:scale-95"
         >
           <PlusCircle className="w-5 h-5" />
@@ -360,19 +329,17 @@ export default function TeamsPage() {
                   <span className="text-[10px] font-bold text-slate-400 bg-slate-800/80 px-2 py-0.5 rounded-full">
                     {tm.player_count}p
                   </span>
-                  {isScorer && (
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleDeleteTeam(tm.id, tm.name);
-                      }}
-                      className="opacity-0 group-hover:opacity-100 p-1 text-slate-500 hover:text-red-400 rounded-md transition-all hover:bg-slate-800"
-                      title={`Delete ${tm.name}`}
-                    >
-                      <Trash2 className="w-3.5 h-3.5" />
-                    </button>
-                  )}
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleDeleteTeam(tm.id, tm.name);
+                    }}
+                    className="opacity-0 group-hover:opacity-100 p-1 text-slate-500 hover:text-red-400 rounded-md transition-all hover:bg-slate-800"
+                    title={`Delete ${tm.name}`}
+                  >
+                    <Trash2 className="w-3.5 h-3.5" />
+                  </button>
                 </div>
               </div>
 
@@ -442,17 +409,15 @@ export default function TeamsPage() {
                 <span>+ Add Player to Squad</span>
               </button>
 
-              {isScorer && (
-                <button
-                  type="button"
-                  onClick={() => handleDeleteTeam(teamDetails.team.id, teamDetails.team.name)}
-                  className="inline-flex items-center gap-1.5 bg-red-500/10 hover:bg-red-500/20 text-red-400 hover:text-red-300 px-3.5 py-2 rounded-xl text-xs font-bold border border-red-500/30 transition-all active:scale-95"
-                  title="Delete this team"
-                >
-                  <Trash2 className="w-3.5 h-3.5" />
-                  <span>Delete Team</span>
-                </button>
-              )}
+              <button
+                type="button"
+                onClick={() => handleDeleteTeam(teamDetails.team.id, teamDetails.team.name)}
+                className="inline-flex items-center gap-1.5 bg-red-500/10 hover:bg-red-500/20 text-red-400 hover:text-red-300 px-3.5 py-2 rounded-xl text-xs font-bold border border-red-500/30 transition-all active:scale-95"
+                title="Delete this team"
+              >
+                <Trash2 className="w-3.5 h-3.5" />
+                <span>Delete Team</span>
+              </button>
 
               <Link
                 to="/scorer"
@@ -508,15 +473,13 @@ export default function TeamsPage() {
                       </div>
                     </div>
 
-                    {isScorer && (
-                      <button
-                        onClick={() => handleDeletePlayer(p.id, p.name)}
-                        className="text-slate-600 hover:text-red-400 p-1 rounded-lg transition-colors shrink-0"
-                        title="Remove player from squad"
-                      >
-                        <Trash2 className="w-3.5 h-3.5" />
-                      </button>
-                    )}
+                    <button
+                      onClick={() => handleDeletePlayer(p.id, p.name)}
+                      className="text-slate-600 hover:text-red-400 p-1 rounded-lg transition-colors shrink-0"
+                      title="Remove player from squad"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </button>
                   </div>
                 ))}
               </div>

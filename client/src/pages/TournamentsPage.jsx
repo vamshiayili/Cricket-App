@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Trophy, MapPin, Calendar, Users, Award, ChevronRight, PlusCircle, Shield } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
 
 export default function TournamentsPage() {
   const [tournaments, setTournaments] = useState([]);
@@ -9,7 +8,6 @@ export default function TournamentsPage() {
   const [tournamentDetails, setTournamentDetails] = useState(null);
   const [loading, setLoading] = useState(true);
   const [detailsLoading, setDetailsLoading] = useState(false);
-  const { isScorer } = useAuth();
 
   // Create tournament modal
   const [showCreateModal, setShowCreateModal] = useState(false);
@@ -72,12 +70,10 @@ export default function TournamentsPage() {
   const handleCreateSubmit = async (e) => {
     e.preventDefault();
     try {
-      const token = localStorage.getItem('cricket_auth_token');
       const res = await fetch('/api/tournaments', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify(formData)
       });
@@ -113,15 +109,13 @@ export default function TournamentsPage() {
             <span>Create My Team & Squad</span>
           </Link>
 
-          {isScorer && (
-            <button
-              onClick={handleOpenCreateModal}
-              className="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-4 py-2.5 rounded-xl text-sm shadow-md transition-all"
-            >
-              <PlusCircle className="w-4 h-4" />
-              <span>Create Tournament</span>
-            </button>
-          )}
+          <button
+            onClick={handleOpenCreateModal}
+            className="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-4 py-2.5 rounded-xl text-sm shadow-md transition-all"
+          >
+            <PlusCircle className="w-4 h-4" />
+            <span>Create Tournament</span>
+          </button>
         </div>
       </div>
 

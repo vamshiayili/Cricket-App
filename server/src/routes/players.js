@@ -1,7 +1,6 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../database/db');
-const { authenticateToken, requireScorerOrAdmin } = require('../middleware/auth');
 
 // Get all players (with team info and career summary)
 router.get('/', (req, res) => {
@@ -273,7 +272,7 @@ router.get('/:id', (req, res) => {
 });
 
 // Add player
-router.post('/', authenticateToken, requireScorerOrAdmin, (req, res) => {
+router.post('/', (req, res) => {
   try {
     const { name, team_id, jersey_number, role, batting_style, bowling_style, village, avatar_url } = req.body;
     if (!name) {

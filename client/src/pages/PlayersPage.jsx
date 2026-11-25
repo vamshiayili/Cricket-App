@@ -3,7 +3,6 @@ import {
   Users, Flame, Award, Search, PlusCircle, Shield, ChevronRight,
   Activity, X, Zap, Trophy, Target, Star
 } from 'lucide-react';
-import { useAuth } from '../context/AuthContext';
 
 export default function PlayersPage() {
   const [players, setPlayers] = useState([]);
@@ -20,8 +19,6 @@ export default function PlayersPage() {
   const [playerModalData, setPlayerModalData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [leaderboardTab, setLeaderboardTab] = useState('ALL_STARS'); // 'ALL_STARS', 'RUNS', 'WICKETS', 'MOM', 'STRIKE_RATE'
-
-  const { isScorer } = useAuth();
 
   // Add player modal state
   const [showAddModal, setShowAddModal] = useState(false);
@@ -90,12 +87,10 @@ export default function PlayersPage() {
   const handleAddPlayerSubmit = async (e) => {
     e.preventDefault();
     try {
-      const token = localStorage.getItem('cricket_auth_token');
       const res = await fetch('/api/players', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify(addForm)
       });
@@ -127,15 +122,13 @@ export default function PlayersPage() {
           </p>
         </div>
 
-        {isScorer && (
-          <button
-            onClick={handleOpenAddModal}
-            className="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-4 py-2.5 rounded-xl text-sm shadow-md transition-all self-start sm:self-auto"
-          >
-            <PlusCircle className="w-4 h-4" />
-            <span>Register Player</span>
-          </button>
-        )}
+        <button
+          onClick={handleOpenAddModal}
+          className="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-4 py-2.5 rounded-xl text-sm shadow-md transition-all self-start sm:self-auto"
+        >
+          <PlusCircle className="w-4 h-4" />
+          <span>Register Player</span>
+        </button>
       </div>
 
       {/* TOP SPOTLIGHT TRIO: 1. Most Wickets Person, 2. Man of the Match Person, 3. Highest Strike Rate */}

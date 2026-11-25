@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useSocket } from '../context/SocketContext';
-import { useAuth } from '../context/AuthContext';
 import {
   Radio, MapPin, Calendar, Clock, Award, Shield, Edit3,
   RefreshCw, MessageSquare, ListOrdered, Info, ArrowLeft,
@@ -11,7 +10,6 @@ import {
 export default function MatchDetailsPage() {
   const { id } = useParams();
   const { socket, isConnected } = useSocket();
-  const { isScorer } = useAuth();
 
   const [matchData, setMatchData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -96,15 +94,13 @@ export default function MatchDetailsPage() {
         </Link>
 
         <div className="flex items-center gap-3">
-          {isScorer && (
-            <Link
-              to={`/scorer?match=${match.id}`}
-              className="inline-flex items-center gap-1.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold px-3.5 py-1.5 rounded-xl shadow-md transition-all"
-            >
-              <Edit3 className="w-3.5 h-3.5" />
-              <span>Open Scorer Console</span>
-            </Link>
-          )}
+          <Link
+            to={`/scorer?match=${match.id}`}
+            className="inline-flex items-center gap-1.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold px-3.5 py-1.5 rounded-xl shadow-md transition-all"
+          >
+            <Edit3 className="w-3.5 h-3.5" />
+            <span>Open Scorer Console</span>
+          </Link>
 
           <div className="flex items-center gap-1.5 text-xs text-slate-400 bg-slate-800/80 px-2.5 py-1 rounded-lg border border-slate-700">
             <span className={`w-2 h-2 rounded-full ${isConnected ? 'bg-emerald-400' : 'bg-amber-400'}`}></span>

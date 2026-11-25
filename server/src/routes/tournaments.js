@@ -1,7 +1,6 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../database/db');
-const { authenticateToken, requireScorerOrAdmin } = require('../middleware/auth');
 
 // Get all tournaments with team & match counts
 router.get('/', (req, res) => {
@@ -94,7 +93,7 @@ router.get('/:id', (req, res) => {
 });
 
 // Create tournament (Scorer / Admin)
-router.post('/', authenticateToken, requireScorerOrAdmin, (req, res) => {
+router.post('/', (req, res) => {
   try {
     const { name, village_location, start_date, end_date, banner_url, team_ids } = req.body;
     if (!name || !village_location) {

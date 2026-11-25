@@ -6,7 +6,6 @@ const fs = require('fs');
 const { Server } = require('socket.io');
 require('dotenv').config();
 
-const authRoutes = require('./routes/auth');
 const tournamentRoutes = require('./routes/tournaments');
 const teamRoutes = require('./routes/teams');
 const playerRoutes = require('./routes/players');
@@ -31,7 +30,6 @@ app.use(cors());
 app.use(express.json());
 
 // API Routes
-app.use('/api/auth', authRoutes);
 app.use('/api/tournaments', tournamentRoutes);
 app.use('/api/teams', teamRoutes);
 app.use('/api/players', playerRoutes);

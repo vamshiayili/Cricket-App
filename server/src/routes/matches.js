@@ -1,7 +1,6 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../database/db');
-const { authenticateToken, requireScorerOrAdmin } = require('../middleware/auth');
 
 // Helper to get socket.io instance
 function getIO(req) {
@@ -269,7 +268,7 @@ router.get('/:id', (req, res) => {
 });
 
 // Create new match (Scorer / Admin)
-router.post('/', authenticateToken, requireScorerOrAdmin, (req, res) => {
+router.post('/', (req, res) => {
   try {
     const { tournament_id, team_a_id, team_b_id, overs, venue, match_date } = req.body;
     if (!tournament_id || !team_a_id || !team_b_id) {
@@ -302,7 +301,7 @@ router.post('/', authenticateToken, requireScorerOrAdmin, (req, res) => {
 });
 
 // Record Toss & Choice
-router.post('/:id/toss', authenticateToken, requireScorerOrAdmin, (req, res) => {
+router.post('/:id/toss', (req, res) => {
   try {
     const matchId = req.params.id;
     const { toss_winner_id, toss_decision } = req.body; // 'BAT' or 'BOWL'
@@ -331,7 +330,7 @@ router.post('/:id/toss', authenticateToken, requireScorerOrAdmin, (req, res) => 
 });
 
 // Start Match / Innings 1 (Select Openers & Opening Bowler)
-router.post('/:id/start', authenticateToken, requireScorerOrAdmin, (req, res) => {
+router.post('/:id/start', (req, res) => {
   try {
     const matchId = req.params.id;
     const { striker_id, non_striker_id, bowler_id } = req.body;
@@ -407,7 +406,7 @@ router.post('/:id/start', authenticateToken, requireScorerOrAdmin, (req, res) =>
 });
 
 // Start Innings 2 (Select 2nd Innings Openers & Opening Bowler)
-router.post('/:id/start-second-innings', authenticateToken, requireScorerOrAdmin, (req, res) => {
+router.post('/:id/start-second-innings', (req, res) => {
   try {
     const matchId = req.params.id;
     const { striker_id, non_striker_id, bowler_id } = req.body;
@@ -475,7 +474,7 @@ router.post('/:id/start-second-innings', authenticateToken, requireScorerOrAdmin
 });
 
 // Core Scoring Engine: Record a Ball
-router.post('/:id/score-ball', authenticateToken, requireScorerOrAdmin, (req, res) => {
+router.post('/:id/score-ball', (req, res) => {
   try {
     const matchId = req.params.id;
     let {
@@ -794,7 +793,7 @@ router.post('/:id/score-ball', authenticateToken, requireScorerOrAdmin, (req, re
 });
 
 // Set / Change Current Bowler (e.g. for next over)
-router.post('/:id/change-bowler', authenticateToken, requireScorerOrAdmin, (req, res) => {
+router.post('/:id/change-bowler', (req, res) => {
   try {
     const matchId = req.params.id;
     const { bowler_id } = req.body;
@@ -823,7 +822,7 @@ router.post('/:id/change-bowler', authenticateToken, requireScorerOrAdmin, (req,
 });
 
 // Set / Change Batsman (e.g. after wicket or retired hurt)
-router.post('/:id/change-batsman', authenticateToken, requireScorerOrAdmin, (req, res) => {
+router.post('/:id/change-batsman', (req, res) => {
   try {
     const matchId = req.params.id;
     const { player_id, position } = req.body; // position: 'striker' or 'non_striker'
@@ -857,7 +856,7 @@ router.post('/:id/change-batsman', authenticateToken, requireScorerOrAdmin, (req
 });
 
 // Undo Last Ball
-router.post('/:id/undo', authenticateToken, requireScorerOrAdmin, (req, res) => {
+router.post('/:id/undo', (req, res) => {
   try {
     const matchId = req.params.id;
     const match = db.prepare('SELECT * FROM matches WHERE id = ?').get(matchId);
@@ -983,7 +982,7 @@ router.post('/:id/undo', authenticateToken, requireScorerOrAdmin, (req, res) => 
 });
 
 // Swap Batsman Strike manually
-router.post('/:id/swap-strike', authenticateToken, requireScorerOrAdmin, (req, res) => {
+router.post('/:id/swap-strike', (req, res) => {
   try {
     const matchId = req.params.id;
     const match = db.prepare('SELECT * FROM matches WHERE id = ?').get(matchId);

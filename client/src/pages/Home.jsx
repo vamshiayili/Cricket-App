@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { useSocket } from '../context/SocketContext';
-import { useAuth } from '../context/AuthContext';
 import LiveScoreCard from '../components/LiveScoreCard';
 import { Radio, PlusCircle, Filter, Trophy, Calendar, Sparkles, RefreshCw } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -10,7 +9,6 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('ALL'); // 'ALL', 'LIVE', 'SCHEDULED', 'COMPLETED'
   const { socket } = useSocket();
-  const { isScorer } = useAuth();
 
   // Create match modal state
   const [showCreateModal, setShowCreateModal] = useState(false);
@@ -94,12 +92,10 @@ export default function Home() {
   const handleCreateMatchSubmit = async (e) => {
     e.preventDefault();
     try {
-      const token = localStorage.getItem('cricket_auth_token');
       const res = await fetch('/api/matches', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify(formData)
       });
@@ -151,15 +147,13 @@ export default function Home() {
               <span>Go to Scorer Keypad</span>
             </Link>
 
-            {isScorer && (
-              <button
-                onClick={handleOpenCreateModal}
-                className="bg-slate-800 hover:bg-slate-700 text-white font-semibold px-4 py-2.5 rounded-xl text-sm border border-slate-700 transition-all flex items-center gap-2"
-              >
-                <PlusCircle className="w-4 h-4 text-emerald-400" />
-                <span>Create New Match</span>
-              </button>
-            )}
+            <button
+              onClick={handleOpenCreateModal}
+              className="bg-slate-800 hover:bg-slate-700 text-white font-semibold px-4 py-2.5 rounded-xl text-sm border border-slate-700 transition-all flex items-center gap-2"
+            >
+              <PlusCircle className="w-4 h-4 text-emerald-400" />
+              <span>Create New Match</span>
+            </button>
 
             <button
               onClick={fetchMatches}

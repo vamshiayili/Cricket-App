@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate, Link } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
 import { useSocket } from '../context/SocketContext';
 import {
   Edit3, Radio, RotateCcw, ArrowRightLeft, UserCheck,
-  AlertCircle, ShieldAlert, CheckCircle, ChevronDown, Award,
+  AlertCircle, CheckCircle, ChevronDown, Award,
   Users, RefreshCw, Eye
 } from 'lucide-react';
 
@@ -13,7 +12,6 @@ export default function ScorerConsolePage() {
   const navigate = useNavigate();
   const matchIdParam = searchParams.get('match');
 
-  const { user, isScorer } = useAuth();
   const { socket } = useSocket();
 
   const [matches, setMatches] = useState([]);
@@ -119,8 +117,6 @@ export default function ScorerConsolePage() {
     };
   }, [socket, selectedMatchId]);
 
-  const token = localStorage.getItem('cricket_auth_token');
-
   // Generic API caller helper
   const sendScorerAction = async (endpoint, body = {}) => {
     setActionLoading(true);
@@ -130,8 +126,7 @@ export default function ScorerConsolePage() {
       const res = await fetch(`/api/matches/${selectedMatchId}/${endpoint}`, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify(body)
       });
@@ -260,24 +255,6 @@ export default function ScorerConsolePage() {
       setShowBatsmanModal(false);
     } catch (e) {}
   };
-
-  if (!isScorer) {
-    return (
-      <div className="max-w-md mx-auto my-16 bg-slate-900 border border-slate-800 rounded-3xl p-8 text-center space-y-4 shadow-xl">
-        <ShieldAlert className="w-12 h-12 text-amber-400 mx-auto" />
-        <h2 className="text-xl font-bold text-white">Scorer Access Required</h2>
-        <p className="text-sm text-slate-300">
-          You must be logged in as a <strong>Scorer</strong> or <strong>Admin</strong> to enter live scores.
-        </p>
-        <Link
-          to="/login"
-          className="inline-block w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2.5 rounded-xl text-sm transition-all shadow-md"
-        >
-          Sign In with Scorer Credentials
-        </Link>
-      </div>
-    );
-  }
 
   const { match, activeInnings, currentStriker, currentNonStriker, currentBowler, recentOverBalls = [] } = matchData || {};
 

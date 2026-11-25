@@ -7,7 +7,6 @@ import ScorerConsolePage from './pages/ScorerConsolePage';
 import TournamentsPage from './pages/TournamentsPage';
 import TeamsPage from './pages/TeamsPage';
 import PlayersPage from './pages/PlayersPage';
-import LoginPage from './pages/LoginPage';
 
 export default function App() {
   return (
@@ -22,7 +21,6 @@ export default function App() {
           <Route path="/tournaments" element={<TournamentsPage />} />
           <Route path="/teams" element={<TeamsPage />} />
           <Route path="/players" element={<PlayersPage />} />
-          <Route path="/login" element={<LoginPage />} />
         </Routes>
       </main>
 
