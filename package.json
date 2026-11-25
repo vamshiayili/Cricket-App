@@ -1,0 +1,23 @@
+{
+  "name": "cricket-app",
+  "version": "1.0.0",
+  "description": "Village Cricket Live Score & Scoring Management System",
+  "scripts": {
+    "start": "node server/src/server.js",
+    "server": "node --watch server/src/server.js",
+    "client": "npm run dev --prefix client",
+    "build": "npm run build --prefix client",
+    "seed": "node server/src/database/seed.js"
+  },
+  "keywords": [
+    "cricket",
+    "village-cricket",
+    "live-scoring",
+    "full-stack",
+    "react",
+    "socket.io",
+    "sqlite"
+  ],
+  "author": "",
+  "license": "ISC"
+}
